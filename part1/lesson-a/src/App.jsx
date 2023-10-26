@@ -1,23 +1,30 @@
-const Hello = (props) => {
-  console.log(props)
-  return (
-    <div>
-      <p>
-        Hello {props.name}, you are {props.age} years old
-      </p>
-    </div>
-  )
-}
+import { useState } from "react"
+import Display from "../components/Display"
+import { Button } from "../components/Button"
 
 const App = () => {
-  const name = 'Peter'
-  const age = 10
+  const [counter, setCounter] = useState(0)
+  console.log('rendering with counter value', counter);
+
+  const increaseByOne = () => {
+    console.log('increasing, value before', counter);
+    setCounter(counter + 1)
+  }
+  const decreaseByOne = () => {
+    console.log('decreasing, value before', counter);
+    setCounter(counter - 1)
+  }
+  const setToZero = () => {
+    console.log('resetting to zero, value before', counter);
+    setCounter(0)
+  }
 
   return (
     <div>
-      <h1>Greetings</h1>
-      <Hello name='Maya' age={26 + 10} />
-      <Hello name={name} age={age} />
+      <Display counter={counter} />
+      <Button handleClick={increaseByOne} text='plus' />
+      <Button handleClick={setToZero} text='zero' />
+      <Button handleClick={decreaseByOne} text='minus' />
     </div>
   )
 }
