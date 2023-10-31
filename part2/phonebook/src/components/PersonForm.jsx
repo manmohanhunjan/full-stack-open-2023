@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const PersonForm = ({ addName, newName, handleNameChange, newNumber, handleNumberChange }) => {
+const PersonForm = ({ addName, newName, handleNameChange, newNumber, handleNumberChange }) => {
     return (
         <div>
             <form onSubmit={addName}>
@@ -15,3 +15,5 @@ export const PersonForm = ({ addName, newName, handleNameChange, newNumber, hand
         </div>
     )
 }
+
+export default PersonForm

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const Persons = ({ namesToShow }) => {
+const Persons = ({ namesToShow }) => {
     return (
         <div>
             {namesToShow.map(user =>
@@ -11,3 +11,5 @@ export const Persons = ({ namesToShow }) => {
         </div>
     )
 }
+
+export default Persons
