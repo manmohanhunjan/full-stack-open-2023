@@ -1,5 +1,5 @@
 {
-  "name": "lesson-a",
+  "name": "countries-data-fetcher",
   "private": true,
   "version": "0.0.0",
   "type": "module",
