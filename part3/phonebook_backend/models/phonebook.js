@@ -20,8 +20,17 @@ const phonebookSchema = new mongoose.Schema({
         minLength: 3,
         required: true
     },
-    number: String,
-})
+    number: {
+        type: String,
+        validate: {
+            validator: function (v) {
+                return /^(?:\d{2}-\d{8,}|\d{3}-\d{8,})$/.test(v);
+            },
+            message: props => `${props.value} is not a valid phone number!`
+        },
+        required: [true, 'User phone number required']
+    },
+});
 
 phonebookSchema.set('toJSON', {
     transform: (document, returnedObject) => {
@@ -30,5 +39,6 @@ phonebookSchema.set('toJSON', {
         delete returnedObject.__v
     }
 })
+
 
 module.exports = mongoose.model('Phonebook', phonebookSchema)
