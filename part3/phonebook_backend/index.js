@@ -1,7 +1,20 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+
+const phonebook = require('./models/phonebook')
+
+const errorHandler = (error, req, res, next) => {
+    console.log(error.message)
+
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
 
 app.use(cors())
 app.use(express.json())
@@ -51,7 +64,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    phonebook.find({})
+        .then(result => {
+            res.json(result)
+        })
+        .catch(error => next(error))
 })
 
 const date = new Date()
@@ -63,28 +80,30 @@ app.get('/info', (req, res) => {
     `).end()
 })
 
-app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(p => p.id === id)
-
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+app.get('/api/persons/:id', (req, res, next) => {
+    phonebook.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(p => p.id !== id)
-
-    res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+    phonebook.findByIdAndDelete(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
-const generateId = () => {
-    const randomId = Math.floor(Math.random() * 1000000)
-    return randomId
-}
+// const generateId = () => {
+//     const randomId = Math.floor(Math.random() * 1000000)
+//     return randomId
+// }
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
@@ -93,19 +112,42 @@ app.post('/api/persons', (req, res) => {
         return res.send({ error: 'name or number is missing' }).status(400)
     }
 
-    if (persons.find(p => p.name === body.name)) {
-        return res.send({ error: 'name must be unique' }).status(400)
-    }
+    // if (persons.find(p => p.name === body.name)) {
+    //     return res.send({ error: 'name must be unique' }).status(400)
+    // }
+    // if (phonebook.find({ name: body.name })) {
+    //     return res.send({ error: 'name must be unique' }).status(400)
+    // }
+
+    const person = new phonebook({
+        name: body.name,
+        number: body.number,
+    })
+    person.save().then(savedPerson => {
+        res.json(savedPerson)
+    })
+
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body
 
     const person = {
-        id: generateId(),
         name: body.name,
-        number: body.number
+        number: body.number,
     }
 
-    persons = persons.concat(person)
-    res.json(person)
+    phonebook.findByIdAndUpdate(req.params.id, person, { new: true })
+        .then(updatedPerson => {
+            res.json(updatedPerson)
+        })
+        .catch(error => {
+            next(error)
+        })
+
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
