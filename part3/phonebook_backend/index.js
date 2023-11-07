@@ -100,10 +100,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
         .catch(error => next(error))
 })
 
-// const generateId = () => {
-//     const randomId = Math.floor(Math.random() * 1000000)
-//     return randomId
-// }
+
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
@@ -111,13 +108,6 @@ app.post('/api/persons', (req, res) => {
     if (!body.name || !body.number) {
         return res.send({ error: 'name or number is missing' }).status(400)
     }
-
-    // if (persons.find(p => p.name === body.name)) {
-    //     return res.send({ error: 'name must be unique' }).status(400)
-    // }
-    // if (phonebook.find({ name: body.name })) {
-    //     return res.send({ error: 'name must be unique' }).status(400)
-    // }
 
     const person = new phonebook({
         name: body.name,
@@ -149,7 +139,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port http://localhost:${PORT}`);
 })
