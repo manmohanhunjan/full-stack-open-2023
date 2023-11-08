@@ -42,7 +42,15 @@ const App = () => {
             `Added ${returnedContact.name}`
           )
           setTimeout(() => { setNotiMessage(null) }, 5000)
-        }) : window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`) ?
+        })
+        .catch(error => {
+          setNotiColor('red')
+          setNotiMessage(
+            `${error.response.data.error}`
+          )
+          setTimeout(() => { setNotiMessage(null) }, 5000)
+        })
+      : window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`) ?
         phonebookService
           .update(numberObject.id, changedNumber)
           .then(returnedContact => {
